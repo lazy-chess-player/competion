@@ -57,7 +57,7 @@ void solve()
 {
     string a,b;
     cin>>a>>b;
-    
+    int b;
 }
 
 int main()
