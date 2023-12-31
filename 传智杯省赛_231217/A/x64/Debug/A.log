@@ -1,0 +1,4 @@
+﻿  A.cpp
+D:\Code\competion\传智杯省赛_231217\A\A.cpp(49,19): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+D:\Code\competion\传智杯省赛_231217\A\A.cpp(55,8): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+  A.vcxproj -> D:\Code\competion\传智杯省赛_231217\A\x64\Debug\A.exe
