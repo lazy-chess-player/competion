@@ -216,9 +216,8 @@ ld squ(ld x) { return x * x; }
 struct Point
 {
     ld x, y; // 点的x和y坐标
-
     // 默认构造函数，将点初始化为原点(0, 0)
-    Point() { x = y = 0; }
+    Point() { x = y; }
 
     // 带参数构造函数，根据给定坐标初始化点
     Point(ld _x, ld _y) { x = _x, y = _y; }
@@ -322,9 +321,14 @@ struct Point
     Point rotate(ld ang) { return rotate(Point(0, 0), ang); }
 };
 
+// 三点叉积
+ld Xmul(Point a, Point b, Point o)
+{
+    return (a.x - o.x) * (b.y - o.y) - (b.x - o.x) * (a.y - o.y);
+}
 ld area(Point A, Point B, Point C)
 {
-    return fabs((A - B) ^ (C - B)) / 2;
+    return fabs((A - C) ^ (B - C)) / 2;
 }
 
 struct Line
@@ -479,6 +483,18 @@ struct Line
     }
 };
 
+// 判断点q是否在三角形abc中(极角序)
+bool inTriangle(Point q, Point a, Point b, Point c)
+{
+    Line A(a, b), B(b, c), C(c, a);
+    // 如果在三角形上
+    if (A.PointOnSegment(q) || B.PointOnSegment(q) || C.PointOnSegment(q))
+        return true;
+    if (Xmul(a, b, q) > 0 && Xmul(b, c, q) > 0 && Xmul(a, c, q) < 0) // 如果在三角形内
+        return true;
+    return false;
+}
+
 // 凸包结构体定义
 struct Polygon
 {
@@ -559,7 +575,7 @@ struct Polygon
     }
 
     // 判断点是否在凸包内
-    bool isPointInside(Point q)
+    bool inside(Point q)
     {
         // 遍历凸包的每一条边
         for (int i = 0; i < n; i++)
@@ -575,8 +591,37 @@ struct Polygon
         return true;
     }
 
+    // 使用二分查找判断点是否在凸包内，复杂度为 O(log n)
+    bool insideLogN(Point q)
+    {
+        // 二分查找点 a 是否在凸多边形内部
+        int l = 1;
+        int r = n - 1;
+
+        while (l < r)
+        {
+            int mid = (l + r) / 2;
+
+            // 检查点 a 是否在由点 p[0], p[mid], p[mid + 1] 构成的三角形内
+            if (inTriangle(q, p[0], p[mid], p[mid + 1]) == true)
+                return true;
+
+            // 检查点 a 是否在 p[0], p[mid], p[mid + 1] 的边上或在三角形之外
+            if (Xmul(p[0], p[mid], q) >= 0 && Xmul(p[0], p[mid + 1], q) <= 0 && Xmul(p[mid], p[mid + 1], q) < 0)
+                return false;
+
+            // 根据点 a 与 p[0] 的相对位置调整二分查找的区间
+            if (Xmul(p[0], p[mid], q) > 0 && Xmul(p[0], p[mid + 1], q) > 0)
+                l = mid + 1; // 点 a 位于 mid 右侧，移动左边界
+            else
+                r = mid; // 点 a 位于 mid 左侧，移动右边界
+        }
+
+        return false; // 最终未找到点 a 在凸多边形内
+    }
+
     // 计算点到凸包的最短距离
-    ld distanceToPoint(Point p)
+    ld distToPoint(Point p)
     {
         ld minDist = infd; // 初始化为无穷大
         for (int i = 0; i < n; i++)
@@ -584,7 +629,7 @@ struct Polygon
             minDist = min(minDist, l[i].dispointtoseg(p));
         }
         return minDist;
-    }
+    } // 计算点到凸包的最短距离，使用二分查找，复杂度为 O(log n)
 };
 
 void solve()
@@ -604,10 +649,10 @@ void solve()
         ld r = (Point(a - b).len()) / 2.0;
         Point c = (a + b) / 2.0;
         ld mn = infd;
-        if (poly.isPointInside(c))
+        if (poly.insideLogN(c))
             mn = 0.0;
         else
-            mn = poly.distanceToPoint(c);
+            mn = poly.distToPoint(c);
         cout << fixed << setprecision(10) << mn * mn + r * r / 2.0 << endl;
     }
 }
