@@ -204,20 +204,18 @@ void solve()
 {
     ll n;
     cin >> n;
-    vl a(n + 1);
-    for (int i = 1; i <= n; i++)
+    vl a(n);
+    for (int i = 0; i < n; i++)
         cin >> a[i];
-
-    ll m = n * (n + 1) / 2, k = (m + 1) / 2;
 
     auto calc = [&](ll x) -> ll
     {
-        vl pre_a(n + 1, 0);
+        vl pre_a(n + 1), b;
         vvl pre_b(n + 1, vl(n + 1, 0));
-
         for (int i = 1; i <= n; i++)
-            pre_a[i] = pre_a[i - 1] + (a[i] < x);
-
+        {
+            pre_a[i] = pre_a[i - 1] + (a[i - 1] < x);
+        }
         for (int i = 1; i <= n; i++)
         {
             for (int j = i; j <= n; j++)
@@ -226,7 +224,6 @@ void solve()
                 pre_b[i][j] = pre_a[j] - pre_a[i - 1] >= (cnt + 1) / 2;
             }
         }
-
         ll ans = 0;
         for (int i = 1; i <= n; i++)
         {
@@ -237,23 +234,22 @@ void solve()
                 ans += (cur >= (cnt + 1) / 2);
             }
         }
-
         return ans;
     };
 
-    ll lo = 0, hi = 1e9 + 1;
+    ll l = 0, r = 1e9 + 1;
+    ll m = n * (n + 1) / 2, k = (m + 1) / 2;
 
-    // 二分查找
-    while (hi - lo > 1)
+    while (r - l > 1)
     {
-        ll mid = (lo + hi) / 2;
+        ll mid = (l + r) >> 1;
         if (calc(mid) < k)
-            lo = mid;
+            l = mid;
         else
-            hi = mid;
+            r = mid;
     }
 
-    cout << hi << endl; // 输出二分查找得到的结果
+    cout << l << endl;
 }
 
 int main()

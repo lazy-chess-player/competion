@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "(Windows) 启动",
+            "type": "cppvsdbg",
+            "request": "launch",
+            // 这项是启动的程序位置，把tasks.json中的生成文件的路径复制粘贴过来就可以了
+            "program": "${fileDirname}\\build\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            // 这项改为integratedTerminal，就和code runner一样是在vscode内置终端中运行了
+            "console": "integratedTerminal",
+            // 这一项一开始没有，要自己写，代表启动前先执行的编译任务，把tasks.json中的label复制粘贴过来就可以了
+            "preLaunchTask": "C/C++Build"
+        }
+    ]
+}
