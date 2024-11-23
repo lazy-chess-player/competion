@@ -1,4 +1,0 @@
-﻿  Ecpp.cpp
-D:\Code\competion\传智杯省赛_231217\E\Ecpp.cpp(49,19): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
-D:\Code\competion\传智杯省赛_231217\E\Ecpp.cpp(108,20): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
-  E.vcxproj -> D:\Code\competion\传智杯省赛_231217\E\x64\Debug\E.exe
